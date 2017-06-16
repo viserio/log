@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Viserio\Component\Log\Events;
+namespace Viserio\Component\Log\Event;
 
 use Viserio\Component\Contracts\Events\Event as EventContract;
 use Viserio\Component\Contracts\Log\Log as LogContract;

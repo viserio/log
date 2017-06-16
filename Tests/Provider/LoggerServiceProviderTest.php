@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Viserio\Component\Log\Tests\Providers;
+namespace Viserio\Component\Log\Tests\Provider;
 
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
@@ -8,9 +8,9 @@ use Psr\Log\LoggerInterface;
 use Viserio\Component\Container\Container;
 use Viserio\Component\Contracts\Events\EventManager as EventManagerContract;
 use Viserio\Component\Contracts\Log\Log;
-use Viserio\Component\Events\Providers\EventsServiceProvider;
+use Viserio\Component\Events\Provider\EventsServiceProvider;
 use Viserio\Component\Log\HandlerParser;
-use Viserio\Component\Log\Providers\LoggerServiceProvider;
+use Viserio\Component\Log\Provider\LoggerServiceProvider;
 use Viserio\Component\Log\Writer as MonologWriter;
 
 class LoggerServiceProviderTest extends TestCase

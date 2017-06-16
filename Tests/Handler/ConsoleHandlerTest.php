@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Viserio\Component\Log\Tests\Handlers;
+namespace Viserio\Component\Log\Tests\Handler;
 
 use DateTime;
 use Monolog\Logger;
@@ -11,11 +11,11 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Console\Output\OutputInterface;
 use Viserio\Component\Console\ConsoleEvents;
-use Viserio\Component\Console\Events\ConsoleCommandEvent;
-use Viserio\Component\Console\Events\ConsoleTerminateEvent;
+use Viserio\Component\Console\Event\ConsoleCommandEvent;
+use Viserio\Component\Console\Event\ConsoleTerminateEvent;
 use Viserio\Component\Events\EventManager;
-use Viserio\Component\Log\Formatters\ConsoleFormatter;
-use Viserio\Component\Log\Handlers\ConsoleHandler;
+use Viserio\Component\Log\Formatter\ConsoleFormatter;
+use Viserio\Component\Log\Handler\ConsoleHandler;
 
 /**
  * Tests the ConsoleHandler and also the ConsoleFormatter.

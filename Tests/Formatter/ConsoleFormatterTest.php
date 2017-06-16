@@ -2,31 +2,35 @@
 declare(strict_types=1);
 namespace Viserio\Component\Log\Tests;
 
+use DateTime;
 use Monolog\Logger;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\VarDumper\Cloner\VarCloner;
-use Viserio\Component\Log\Formatters\VarDumperFormatter;
+use Viserio\Component\Log\Formatter\ConsoleFormatter;
 
-class VarDumperFormatterTest extends TestCase
+class ConsoleFormatterTest extends TestCase
 {
     public function testFormat()
     {
-        $cloner   = new VarCloner();
-        $formater = new VarDumperFormatter($cloner);
+        $formater = new ConsoleFormatter(['colors' => false]);
 
         self::assertEquals(
-            $this->getRecord(Logger::WARNING, 'test', $cloner->cloneVar([]), $cloner->cloneVar([])),
-            $formater->format($this->getRecord())
+            "16:21:54 <fg=cyan>WARNING  </> <comment>[test]</> {\"foo\":\"bar\"} [] []\n",
+            $formater->format($this->getRecord(Logger::WARNING, json_encode(['foo' => 'bar'])))
         );
     }
 
     public function testFormatBatch()
     {
-        $cloner   = new VarCloner();
-        $formater = new VarDumperFormatter($cloner);
+        $formater = new ConsoleFormatter(['colors' => false]);
 
         self::assertEquals(
-            $this->getMultipleRecords($cloner->cloneVar([]), $cloner->cloneVar([])),
+            [
+                "16:21:54 <fg=white>DEBUG    </> <comment>[test]</> debug message 1 [] []\n",
+                "16:21:54 <fg=white>DEBUG    </> <comment>[test]</> debug message 2 [] []\n",
+                "16:21:54 <fg=green>INFO     </> <comment>[test]</> information [] []\n",
+                "16:21:54 <fg=cyan>WARNING  </> <comment>[test]</> warning [] []\n",
+                "16:21:54 <fg=yellow>ERROR    </> <comment>[test]</> error [] []\n",
+            ],
             $formater->formatBatch($this->getMultipleRecords())
         );
     }
@@ -47,7 +51,7 @@ class VarDumperFormatterTest extends TestCase
             'level'      => $level,
             'level_name' => Logger::getLevelName($level),
             'channel'    => 'test',
-            'datetime'   => 'now',
+            'datetime'   => new DateTime('2013-05-29 16:21:54'),
             'extra'      => $extra,
         ];
     }

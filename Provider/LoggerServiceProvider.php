@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Viserio\Component\Log\Providers;
+namespace Viserio\Component\Log\Provider;
 
 use Interop\Container\ServiceProvider;
 use Monolog\Logger;

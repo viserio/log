@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Viserio\Component\Log\Handlers;
+namespace Viserio\Component\Log\Handler;
 
 /*
  * This file is part of the Symfony package.
@@ -16,11 +16,11 @@ use Monolog\Logger;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Viserio\Component\Console\ConsoleEvents;
-use Viserio\Component\Console\Events\ConsoleCommandEvent;
-use Viserio\Component\Console\Events\ConsoleTerminateEvent;
+use Viserio\Component\Console\Event\ConsoleCommandEvent;
+use Viserio\Component\Console\Event\ConsoleTerminateEvent;
 use Viserio\Component\Contracts\Events\EventManager as EventManagerContract;
 use Viserio\Component\Contracts\Events\Traits\EventsAwareTrait;
-use Viserio\Component\Log\Formatters\ConsoleFormatter;
+use Viserio\Component\Log\Formatter\ConsoleFormatter;
 
 /**
  * Writes logs to the console output depending on its verbosity setting.
