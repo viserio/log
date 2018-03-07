@@ -2,38 +2,45 @@
 declare(strict_types=1);
 namespace Viserio\Component\Log;
 
-use Monolog\Handler\RotatingFileHandler;
-use Monolog\Logger as MonologLogger;
+use Psr\Log\InvalidArgumentException;
+use Psr\Log\LoggerInterface as PsrLoggerInterface;
 use Psr\Log\LoggerTrait;
 use Psr\Log\LogLevel;
 use Viserio\Component\Contract\Events\Traits\EventManagerAwareTrait;
-use Viserio\Component\Contract\Log\Log as LogContract;
 use Viserio\Component\Contract\Support\Arrayable;
 use Viserio\Component\Contract\Support\Jsonable;
 use Viserio\Component\Log\Event\MessageLoggedEvent;
 use Viserio\Component\Log\Traits\ParseLevelTrait;
 
-class Writer extends LogLevel implements LogContract
+class Logger extends LogLevel implements PsrLoggerInterface
 {
     use ParseLevelTrait;
     use EventManagerAwareTrait;
     use LoggerTrait;
 
     /**
+     * The MESSAGE event allows you building profilers or other tools
+     * that aggregate all of the log messages for a given "request" cycle.
+     *
+     * @var string
+     */
+    public const MESSAGE = 'log.message';
+
+    /**
      * The handler parser instance.
      *
-     * @var \Viserio\Component\Log\HandlerParser
+     * @var \Psr\Log\LoggerInterface
      */
-    protected $handlerParser;
+    protected $logger;
 
     /**
      * Create a new log writer instance.
      *
-     * @param \Viserio\Component\Log\HandlerParser $handlerParser
+     * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(HandlerParser $handlerParser)
+    public function __construct(PsrLoggerInterface $logger)
     {
-        $this->handlerParser = $handlerParser;
+        $this->logger = $logger;
     }
 
     /**
@@ -41,6 +48,8 @@ class Writer extends LogLevel implements LogContract
      *
      * @param string $method
      * @param array  $parameters
+     *
+     * @throws \Psr\Log\InvalidArgumentException
      *
      * @return mixed
      */
@@ -50,48 +59,13 @@ class Writer extends LogLevel implements LogContract
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function useFiles(
-        string $path,
-        string $level = 'debug',
-        $processors = null,
-        $formatter = null
-    ): void {
-        $this->handlerParser->parseHandler(
-            'stream',
-            $path,
-            $level,
-            $processors,
-            $formatter
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function useDailyFiles(
-        string $path,
-        int $days = 0,
-        string $level = 'debug',
-        $processors = null,
-        $formatter = null
-    ): void {
-        $this->handlerParser->parseHandler(
-            new RotatingFileHandler($path, $days, self::parseLevel($level)),
-            '',
-            '',
-            $processors,
-            $formatter
-        );
-    }
-
-    /**
      * Logs with an arbitrary level.
      *
      * @param mixed $level
      * @param mixed $message
      * @param array $context
+     *
+     * @throws \Psr\Log\InvalidArgumentException
      *
      * @return void
      */
@@ -108,17 +82,24 @@ class Writer extends LogLevel implements LogContract
             );
         }
 
+        if (! \method_exists($this->getMonolog(), $level)) {
+            throw new InvalidArgumentException(\sprintf(
+                'Call to undefined method \Monolog\Logger::%s',
+                $level
+            ));
+        }
+
         $this->getMonolog()->{$level}($message, $context);
     }
 
     /**
      * Get the underlying Monolog instance.
      *
-     * @return \Monolog\Logger
+     * @return \Psr\Log\LoggerInterface
      */
-    public function getMonolog(): MonologLogger
+    public function getMonolog(): PsrLoggerInterface
     {
-        return $this->handlerParser->getMonolog();
+        return $this->logger;
     }
 
     /**
@@ -128,7 +109,7 @@ class Writer extends LogLevel implements LogContract
      *
      * @return null|bool|float|int|object|string
      */
-    protected function formatMessage($message)
+    private function formatMessage($message)
     {
         if (\is_array($message)) {
             return \var_export($message, true);
